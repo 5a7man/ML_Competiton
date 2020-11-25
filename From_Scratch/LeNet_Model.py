@@ -1,4 +1,3 @@
-
 import numpy as np
 from tensorflow.keras.layers import Conv2D, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras import Sequential
@@ -50,8 +49,8 @@ generator = ImageDataGenerator(rotation_range=90,
 model.fit(generator.flow(x_train,y_train,batch_size = 25),
           validation_data = generator.flow(x_train,y_train,batch_size = 25, subset = 'validation'),
           steps_per_epoch = len(x_train)/25,
-          epochs = 30,
+          epochs = 60,
           verbose =  2,
           callbacks=[early_stopping, lr_sechudle])
 
-model.save('model.h5')
+model.save('lenet_model_2.h5')
