@@ -19,12 +19,13 @@ from tensorflow.keras import Model
 # Data Importing
 x_train = np.load('/content/drive/My Drive/Compition/xs.npy')
 y_train = np.load('/content/drive/My Drive/Compition/ys.npy')
+x_train = x_train/255.0
 
 def build_model():
-  resNet50 = ResNet50(include_top = False, input_shape=(32,32,3),weights='imagenet')
-  for layer in resNet50.layers:
+  model_m = ResNet50(include_top = False, input_shape=(32,32,3),weights='imagenet')
+  for layer in model_m.layers:
     layer.trainable = False
-  x = Flatten()(resNet50.output)
+  x = Flatten()(model_m.output)
   x = Dense(500,activation='relu')(x)
   x = BatchNormalization()(x)
   x = Dropout(0.3)(x)
@@ -35,7 +36,7 @@ def build_model():
   x = BatchNormalization()(x)
   x = Dropout(0.2)(x)
   x = Dense(9,activation='softmax')(x)
-  m = Model(inputs = resNet50.inputs, outputs = x)
+  m = Model(inputs = model_m.inputs, outputs = x)
   return m
 
 model = build_model()
@@ -43,13 +44,13 @@ model = build_model()
 early_stopping = EarlyStopping(monitor = 'val_accuracy', patience =  20, restore_best_weights = True)
 lr_sechudle = ReduceLROnPlateau(monitor = 'val_accuracy', factor = 0.2, patience =  12 )
 
-model.compile(optimizer=Adam(1e-4),
+model.compile(optimizer=Adam(1e-3),
               loss = 'sparse_categorical_crossentropy',
               metrics = ['accuracy'])
 
 model.summary()
 
-generator = ImageDataGenerator(rotation_range=90,
+generator = ImageDataGenerator(rotation_range=15,
                                zoom_range = 0.2,
                                horizontal_flip = True,
                                vertical_flip = True,
@@ -57,11 +58,13 @@ generator = ImageDataGenerator(rotation_range=90,
                                height_shift_range = 0.1,
                                validation_split = 0.2)
 
-model.fit(generator.flow(x_train,y_train,batch_size = 25),
-          validation_data = generator.flow(x_train,y_train,batch_size = 25, subset = 'validation'),
-          steps_per_epoch = len(x_train)/25,
-          epochs = 100,
+model.fit(generator.flow(x_train,y_train,batch_size = 50),
+          validation_data = generator.flow(x_train,y_train,batch_size = 50, subset = 'validation'),
+          steps_per_epoch = len(x_train)/50,
+          epochs = 125,
           verbose =  2,
           callbacks=[early_stopping, lr_sechudle])
 
-model.save('model2_resnet50.h5')
+model.save('model.h5')
+
+model.save('model.h5')
