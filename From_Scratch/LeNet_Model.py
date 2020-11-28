@@ -21,20 +21,22 @@ np.random.seed(seed_value)
 import tensorflow as tf
 tf.random.set_seed(seed_value)
 
-from tensorflow.keras.layers import Conv2D, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization
+from tensorflow.keras.layers import InputLayer,Conv2D, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 
 # Data Importing
 x_train = np.load('/content/drive/My Drive/Compition/xs.npy')
 y_train = np.load('/content/drive/My Drive/Compition/ys.npy')
-x_train = x_train/255.0
 
 def build_model():
   m = Sequential()
-  m.add(Conv2D(filters=100, kernel_size=3, input_shape=(32,32,3), activation='relu'))
+  m.add(InputLayer(input_shape=(32,32,3)))
+  m.add(Rescaling(scale=1./255,offset=0.0))
+  m.add(Conv2D(filters=100, kernel_size=3, activation='relu'))
   m.add(MaxPool2D(pool_size=2, strides=2))
   m.add(BatchNormalization())
   m.add(Conv2D(filters=150, kernel_size=3, activation='relu'))
