@@ -34,18 +34,21 @@ x_train = x_train/255.0
 
 def build_model():
   m = Sequential()
-  m.add(Conv2D(filters=32, kernel_size=3, input_shape=(32,32,3), activation='relu'))
+  m.add(Conv2D(filters=100, kernel_size=3, input_shape=(32,32,3), activation='relu'))
   m.add(MaxPool2D(pool_size=2, strides=2))
   m.add(BatchNormalization())
-  m.add(Conv2D(filters=64, kernel_size=3, activation='relu'))
+  m.add(Conv2D(filters=150, kernel_size=3, activation='relu'))
   m.add(MaxPool2D(pool_size=2, strides=2))
   m.add(BatchNormalization())
-  m.add(Conv2D(filters=64, kernel_size=3, activation='relu'))
+  m.add(Conv2D(filters=200, kernel_size=3, activation='relu'))
   m.add(Flatten())
-  m.add(Dense(64,activation='relu'))
+  m.add(Dense(300,activation='relu'))
   m.add(BatchNormalization())
   m.add(Dropout(0.1))
-  m.add(Dense(32,activation='relu'))
+  m.add(Dense(150,activation='relu'))
+  m.add(BatchNormalization())
+  m.add(Dropout(0.1))
+  m.add(Dense(75,activation='relu'))
   m.add(BatchNormalization())
   m.add(Dropout(0.1))
   m.add(Dense(9,activation='softmax'))
@@ -62,7 +65,7 @@ model.compile(optimizer=Adam(1e-3),
 
 model.summary()
 
-generator = ImageDataGenerator(rotation_range=10,
+generator = ImageDataGenerator(rotation_range=20,
                                zoom_range = 0.2,
                                horizontal_flip = True,
                                vertical_flip = True,
